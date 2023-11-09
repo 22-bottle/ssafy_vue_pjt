@@ -29,11 +29,6 @@ public class TripController {
     public TripController(TripService service) {
         this.service = service;
     }
-    
-    @GetMapping("/trip")
-    public String trip() {
-    	return "trip/trip";
-    }
 
     @GetMapping("/option")
     @RequestBody
