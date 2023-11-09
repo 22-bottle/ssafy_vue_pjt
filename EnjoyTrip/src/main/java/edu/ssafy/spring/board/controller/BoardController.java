@@ -1,15 +1,22 @@
 package edu.ssafy.spring.board.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,15 +28,12 @@ import edu.ssafy.spring.comment.dto.CommentDto;
 import edu.ssafy.spring.comment.model.service.CommentService;
 import edu.ssafy.spring.user.dto.UserDto;
 import edu.ssafy.spring.util.PageNavigation;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Controller
 @RequestMapping("/board")
 public class BoardController {
 
 	private BoardService boardService;
-
 	private CommentService commentService;
 
 	@Autowired
@@ -40,22 +44,24 @@ public class BoardController {
 	}
 
 	@GetMapping("/list")
-	public ModelAndView list(@RequestParam Map<String, String> map, ModelAndView mav) {
-		log.debug("list parameter pgno : {}", map.get("pgno"));
+	public ResponseEntity<Map<String, Object>> list(@RequestParam Map<String, String> map) {
+		ResponseEntity<Map<String, Object>> response = null;
+		Map<String, Object> result = new HashMap();
 		try {
 			List<BoardDto> list = boardService.listArticle(map);
-			PageNavigation pageNavigation = boardService.makePageNavigation(map);
-			mav.addObject("articles", list);
-			mav.addObject("navigation", pageNavigation);
-			mav.addObject("key", map.get("key"));
-			mav.addObject("word", map.get("word"));
-			mav.setViewName("/board/list");
+//			PageNavigation pageNavigation = boardService.makePageNavigation(map);
+			result.put("articles", list);
+//			result.put("navigation", pageNavigation);
+			result.put("key", map.get("key"));
+			result.put("word", map.get("word"));
+			response = new ResponseEntity<>(result, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			mav.setViewName("/error/error");
-			return mav;
-		}
-		return mav;
+			result.put("result", "조회 실패");
+			response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+			return response;
+		} 
+		return response;
 	}
 
 	@GetMapping("/write")
@@ -68,44 +74,40 @@ public class BoardController {
 	}
 
 	@PostMapping("/write")
-	public String write(BoardDto boardDto, RedirectAttributes redirectAttributes, HttpSession session) {
-		UserDto userDto = (UserDto) session.getAttribute("userInfo");
-		if (userDto != null) {
-			try {
-				boardDto.setUser_id(userDto.getUserId());
-				boardService.writeArticle(boardDto);
-				redirectAttributes.addAttribute("pgno", "1");
-				redirectAttributes.addAttribute("key", "");
-				redirectAttributes.addAttribute("word", "");
-				return "redirect:/board/list";
-			} catch (Exception e) {
-				e.printStackTrace();
-				redirectAttributes.addAttribute("msg", "글작성 중 문제가 발생했어요!😥");
-				return "/error/error";
-			}
-		} else {
-			return "/user/login";
+	public ResponseEntity<Map<String, Object>> write(@RequestBody BoardDto boardDto, HttpSession session) {
+		ResponseEntity<Map<String, Object>> response = null;
+		Map<String, Object> map = new HashMap();
+		try {
+			boardService.writeArticle(boardDto);
+			map.put("result", "삽입 성공");
+			response = new ResponseEntity<>(map, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("result", "삽입 실패");
+			response = new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+			return response;
 		}
+		return response;
 	}
 
-	@GetMapping("/view")
-	public String view(@RequestParam("articleno") int articleNo, @RequestParam Map<String, String> map, Model model) {
-		System.out.println(articleNo);
+	@GetMapping("/view/{articleNo}")
+	public ResponseEntity<Map<String, Object>> view(@PathVariable int articleNo) {
+		ResponseEntity<Map<String, Object>> response = null;
+		Map<String, Object> map = new HashMap();
 		try {
 			BoardDto boardDto = boardService.getArticle(articleNo);
 			List<CommentDto> list = commentService.listComment(articleNo);
 			boardService.updateHit(articleNo);
-			model.addAttribute("article", boardDto);
-			model.addAttribute("pgno", map.get("pgno"));
-			model.addAttribute("key", map.get("key"));
-			model.addAttribute("word", map.get("word"));
-			model.addAttribute("comments", list);
-			return "/board/view";
+			map.put("article", boardDto);
+			map.put("comments", list);
+			response = new ResponseEntity<>(map, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			model.addAttribute("msg", "글내용 출력 중 문제가 발생했어요!😥");
-			return "/error/error";
+			map.put("result", "조회 실패");
+			response = new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+			return response;
 		}
+		return response;
 	}
 
 	@GetMapping("/modify")
@@ -130,88 +132,74 @@ public class BoardController {
 		}
 	}
 
-	@PostMapping("/modify")
-	public String modify(BoardDto boardDto, @RequestParam Map<String, String> map,
-			RedirectAttributes redirectAttributes, HttpSession session) throws Exception {
-		UserDto userDto = (UserDto) session.getAttribute("userInfo");
-		if (userDto.getUserId() != null) {
-			try {
-				boardService.modifyArticle(boardDto);
-				redirectAttributes.addAttribute("pgno", 1);
-				redirectAttributes.addAttribute("key", map.get("key"));
-				redirectAttributes.addAttribute("word", map.get("word"));
-				return "redirect:/board/list";
-			} catch (Exception e) {
-				e.printStackTrace();
-				redirectAttributes.addAttribute("msg", "글수정 중 문제가 발생했어요!😥");
-				return "/error/error";
-			}
-		} else {
-			return "/user/login";
+	@PutMapping("/modify")
+	public ResponseEntity<Map<String, Object>> modify(@RequestBody BoardDto boardDto) throws Exception {
+		ResponseEntity<Map<String, Object>> response = null;
+		Map<String, Object> map = new HashMap();
+		try {
+			boardService.modifyArticle(boardDto);
+			map.put("result", "수정 성공");
+			response = new ResponseEntity<>(map, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("result", "수정 실패");
+			response = new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+			return response;
 		}
+		return response;
 	}
 
-	@GetMapping("/delete")
-	public String delete(@RequestParam("articleno") int articleNo, @RequestParam Map<String, String> map,
-			RedirectAttributes redirectAttributes, HttpSession session) throws Exception {
-		UserDto userDto = (UserDto) session.getAttribute("userInfo");
-		if (userDto != null) {
-			try {
-				boardService.deleteArticle(articleNo);
-				redirectAttributes.addAttribute("pgno", 1);
-				redirectAttributes.addAttribute("key", map.get("key"));
-				redirectAttributes.addAttribute("word", map.get("word"));
-				return "redirect:/board/list";
-			} catch (Exception e) {
-				e.printStackTrace();
-				redirectAttributes.addAttribute("msg", "글삭제 중 문제가 발생했어요!😥");
-				return "/error/error";
-			}
-		} else {
-			return "/user/login";
+	@DeleteMapping("/delete/{articleNo}")
+	public ResponseEntity<Map<String, Object>> delete(@PathVariable int articleNo) throws Exception {
+		ResponseEntity<Map<String, Object>> response = null;
+		Map<String, Object> map = new HashMap();
+		try {
+			boardService.deleteArticle(articleNo);
+			map.put("result", "삭제 성공");
+			response = new ResponseEntity<>(map, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("result", "삭제 실패");
+			response = new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+			return response;
 		}
+		return response;
 	}
 
 	@PostMapping("/commentAdd")
-	public String commentAdd(@RequestParam("articleNo") int articleNo, @RequestParam("comment") String commentContent,
-			Model model, HttpSession session) {
-		UserDto userDto = (UserDto) session.getAttribute("userInfo");
-		if (userDto != null && userDto.getUserId() != null) {
-			CommentDto commentDto = new CommentDto();
-			commentDto.setArticleNo(articleNo);
-			commentDto.setUserId(userDto.getUserId());
-			commentDto.setCommentContent(commentContent);
-			try {
-				commentService.addComment(commentDto);
-				boardService.updateCommentCnt(commentDto);
-				return "redirect:/board/view?articleno=" + articleNo;
-			} catch (Exception e) {
-				e.printStackTrace();
-				model.addAttribute("msg", "댓글 작성 중 문제가 발생했어요!😥");
-				return "/error/error";
-			}
-		} else {
-			return "redirect:/user/login";
+	public ResponseEntity<Map<String, Object>> commentAdd(@RequestBody CommentDto commentDto) {
+		ResponseEntity<Map<String, Object>> response = null;
+		Map<String, Object> map = new HashMap();
+		try {
+			commentService.addComment(commentDto);
+			boardService.updateCommentCnt(commentDto);
+			map.put("result", "삽입 성공");
+			response = new ResponseEntity<>(map, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("result", "삽입 실패");
+			response = new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+			return response;
 		}
+		return response;
 	}
 
-	@GetMapping("/commentDelete")
-	public String commentDelete(@RequestParam("articleno") int articleNo, @RequestParam("commentno") int commentNo,
-			Model model, HttpSession session) {
-		UserDto userDto = (UserDto) session.getAttribute("userInfo");
-		if (userDto != null && userDto.getUserId() != null) {
-			try {
-				commentService.deleteComment(commentNo);
-				boardService.deleteCommentCnt(articleNo);
-				return "redirect:/board/view?articleno=" + articleNo;
-			} catch (Exception e) {
-				e.printStackTrace();
-				model.addAttribute("msg", "댓글 삭제 중 문제가 발생했어요!😥");
-				return "/error/error";
-			}
-		} else {
-			return "redirect:/user/login";
+	@DeleteMapping("/commentDelete/{articleNo}/{commentNo}")
+	public ResponseEntity<Map<String, Object>> commentDelete(@PathVariable int articleNo, @PathVariable int commentNo) {
+		ResponseEntity<Map<String, Object>> response = null;
+		Map<String, Object> map = new HashMap();
+		try {
+			commentService.deleteComment(commentNo);
+			boardService.deleteCommentCnt(articleNo);
+			map.put("result", "삭제 성공");
+			response = new ResponseEntity<>(map, HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			map.put("result", "삭제 실패");
+			response = new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+			return response;
 		}
+		return response;
 	}
 
 }
