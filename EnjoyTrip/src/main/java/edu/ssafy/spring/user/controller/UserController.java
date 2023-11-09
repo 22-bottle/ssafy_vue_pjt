@@ -9,13 +9,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import edu.ssafy.spring.user.dto.UserDto;
 import edu.ssafy.spring.user.model.service.UserService;
@@ -35,30 +37,38 @@ public class UserController extends HttpServlet {
 		this.service = service;
 	}
 	
-    @PostMapping("/update")
-    public String update(@ModelAttribute UserDto userDto, HttpSession session) {
-        String salt = service.getSalt(userDto.getUserId());
-        userDto.setSalt(salt);
-        service.updateUser(userDto);
-        UserDto userInfo = service.getUser(userDto.getUserId());
-        session.setAttribute("userInfo", userInfo);
-        return "include/updatesuccess";
+    @PatchMapping("/update")
+    public ResponseEntity<?> update(@RequestBody UserDto userDto, HttpSession session) {
+    	try {
+	        String salt = service.getSalt(userDto.getUserId());
+	        if (salt == null) {
+	        	throw new Exception();
+	        }
+	        userDto.setSalt(salt);
+	        service.updateUser(userDto);
+	        UserDto userInfo = service.getUser(userDto.getUserId());
+	        session.setAttribute("userInfo", userInfo);
+	        return ResponseEntity.ok("include/updatesuccess");
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return ResponseEntity.ok("error/error");
+    	}
     }
 	
-    @PostMapping("/delete")
-    public String delete(@RequestParam String userId) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> delete(@RequestParam String userId) {
         int cnt = service.deleteUser(userId);
-        return cnt > 0 ? "include/deletesuccess" : "include/deletefail";
+        return cnt > 0 ? ResponseEntity.ok("include/deletesuccess") : ResponseEntity.ok("include/deletefail");
     }
 
     @PostMapping("/regist")
-    public String regist(@ModelAttribute UserDto userDto) throws IOException {
+    public ResponseEntity<?> regist(@RequestBody UserDto userDto) throws IOException {
     	try {
     		service.registUser(userDto);
-    		return "include/joinsuccess";
+    		return ResponseEntity.ok("include/joinsuccess");
     	} catch (Exception e) {
 			e.printStackTrace();
-			return "error/error";
+			return ResponseEntity.ok("error/error");
 		}
         
     }
@@ -85,7 +95,7 @@ public class UserController extends HttpServlet {
 	}
     
     @PostMapping("/login")
-	private String login(@ModelAttribute UserDto userDto, 
+	private ResponseEntity<?> login(@RequestBody UserDto userDto, 
 						 @RequestParam(required = false) String remember,
 						 HttpServletRequest request,
 						 HttpServletResponse response,
@@ -106,17 +116,17 @@ public class UserController extends HttpServlet {
 				c.setMaxAge(0);
 				response.addCookie(c);
 			}
-			return "include/loginsuccess";
+			return  ResponseEntity.ok("include/loginsuccess");
 		} else {
-			return "include/loginfail";
+			return  ResponseEntity.ok("include/loginfail");
 		}
 		
 	}
 	
     @PostMapping("/find")
-    public String find(@ModelAttribute UserDto userDto) {
+    public ResponseEntity<?> find(@RequestBody UserDto userDto) {
         boolean find = service.findUser(userDto);
-        return find ? "redirect:/include/findsuccess" : "redirect:/include/findfail";
+        return find ? ResponseEntity.ok("redirect:/include/findsuccess") : ResponseEntity.ok("redirect:/include/findfail");
     }
 
 }
