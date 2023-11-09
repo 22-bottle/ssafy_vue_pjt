@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.ssafy.spring.trip.model.mapper.TripMapper">
+	<select id="attractionList"
+		resultType="edu.ssafy.spring.trip.dto.AttractionInfoDto">
+		SELECT * FROM attraction_info
+		<where>
+			<if test="attractionInfoDto.sidoCode != 0">
+				AND sido_code = #{attractionInfoDto.sidoCode}
+			</if>
+			<if test="attractionInfoDto.contentType != 0">
+				AND content_type_id = #{attractionInfoDto.contentType}
+			</if>
+		</where>
+	</select>
+
+	<select id="searchByTitle"
+		resultType="edu.ssafy.spring.trip.dto.AttractionInfoDto">
+		SELECT * FROM attraction_info
+		WHERE title LIKE CONCAT('%', #{title},
+		'%')
+		<if test="sidoCode != 0">
+			AND sido_code = #{sidoCode}
+		</if>
+	</select>
+
+
+<select id="searchArea" resultType="edu.ssafy.spring.trip.dto.AreaInfoDto">
+    <choose>
+        <when test="scope == 'gugun'">
+            SELECT gugun_code AS code, CONCAT(#{area}, ' ', gugun_name) AS name
+            FROM gugun
+            WHERE sido_code = #{regcode}
+        </when>
+        <otherwise>
+            SELECT sido_code AS code, CONCAT(#{area}, ' ', sido_name) AS name
+            FROM sido
+        </otherwise>
+    </choose>
+</select>
+
+
+<!--     <select id="searchArea" resultType="edu.ssafy.spring.trip.dto.AreaInfoDto">
+        SELECT 
+            CASE 
+                WHEN '${scope}' = 'gugun' THEN gugun_code 
+                ELSE sido_code 
+            END AS code,
+            CONCAT(#{area}, ' ', 
+                CASE 
+                    WHEN ${scope} = 'gugun' THEN gugun_name 
+                    ELSE sido_name 
+                END) AS name
+        FROM 
+            ${scope}
+        <if test="scope == 'gugun'">
+            WHERE sido_code = #{regcode}
+        </if>
+    </select> -->
+
+<!--     <select id="searchArea" resultType="edu.ssafy.spring.trip.dto.AreaInfoDto">
+        SELECT sido_code code , sido_name name
+        FROM 
+            ${scope}
+        <if test="scope == 'gugun'">
+            WHERE sido_code = #{regcode}
+        </if>
+    </select> -->
+    
+</mapper>
