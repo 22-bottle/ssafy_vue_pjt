@@ -2,6 +2,7 @@
 import axios from 'axios';
 import '@/assets/js/trip.js';
 import { onMounted, ref, computed } from 'vue';
+import { getSiGungu } from '@/api/trip';
 
 const mapContainer = ref(null);
 // 선택된 값을 추적하기 위한 ref 선언
@@ -14,6 +15,8 @@ const tripList = ref(null);
 let regcode = ref('');
 let area = ref('');
 
+const key = import.meta.env.VITE_KAKAO_MAP_KEY;
+
 onMounted(() => {
   loadMap();
   sendRequest('sido', '', '');
@@ -23,7 +26,7 @@ function loadMap() {
   // 카카오 맵 스크립트를 동적으로 로드합니다.
   const script = document.createElement('script');
   script.onload = () => initializeMap(); // 스크립트 로드가 완료되면 지도를 초기화합니다.
-  script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=c1c453654e5d10e503f508c9e7179df7&autoload=false&libraries=services`;
+  script.src = key;
   document.head.appendChild(script);
 }
 
@@ -65,25 +68,14 @@ const selectedType = computed({
 });
 
 async function sendRequest(selid, regcode, area) {
-  const url = 'http://localhost:8080/trip/option';
   let params = `regcode_pattern=${selid}&regcode=${regcode}&area=${area}`;
 
-  const data = await axios.get(`${url}?${params}`);
-  console.log(data);
+  const response = await getSiGungu(params);
   if (selid !== 'detail') {
-    addOption(selid, JSON.parse(data.area));
+    addOption(selid, response.data.area);
   } else {
     displayTripInfo(data);
   }
-  // fetch(`${url}?${params}`)
-  //   .then((response) => response.json())
-  //   .then((data) => {
-  //     if (selid !== 'detail') {
-  //       addOption(selid, JSON.parse(data.area));
-  //     } else {
-  //       displayTripInfo(data);
-  //     }
-  //   });
 }
 
 function addOption(selid, data) {
@@ -97,7 +89,7 @@ function addOption(selid, data) {
     options = selecteGugun.value;
     opt += `<option value="">구군선택</option>`;
   }
-
+  console.log(data);
   data.regcodes.forEach((regcode) => {
     opt += `<option value="${regcode.code}">${regcode.name}</option>`;
   });
