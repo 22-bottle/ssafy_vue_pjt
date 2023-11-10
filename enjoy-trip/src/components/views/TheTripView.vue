@@ -23,7 +23,7 @@ function loadMap() {
   // 카카오 맵 스크립트를 동적으로 로드합니다.
   const script = document.createElement('script');
   script.onload = () => initializeMap(); // 스크립트 로드가 완료되면 지도를 초기화합니다.
-  script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=b9279a4bc661b8f08442322e95e06d92&autoload=false&libraries=services`;
+  script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=c1c453654e5d10e503f508c9e7179df7&autoload=false&libraries=services`;
   document.head.appendChild(script);
 }
 
@@ -65,7 +65,7 @@ const selectedType = computed({
 });
 
 async function sendRequest(selid, regcode, area) {
-  const url = 'http://localhost:5000/trip/option';
+  const url = 'http://localhost:8080/trip/option';
   let params = `regcode_pattern=${selid}&regcode=${regcode}&area=${area}`;
 
   const data = await axios.get(`${url}?${params}`);
