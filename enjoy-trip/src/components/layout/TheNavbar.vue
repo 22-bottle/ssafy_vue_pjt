@@ -14,20 +14,10 @@ import TheUserView from '@/components/views/TheUserView.vue';
                 <router-link to="/" class="nav-link">홈</router-link>
               </li>
               <li class="nav-item">
-                <router-link to="/trip" class="nav-link"
-                  >지역별여행지</router-link
-                >
+                <router-link to="/trip" class="nav-link">지역별여행지</router-link>
               </li>
               <li class="nav-item">
-                <router-link
-                  :to="{
-                    name: 'board',
-                    params: { pgno: 1, key: null, word: null },
-                  }"
-                  class="nav-link"
-                >
-                  여행후기
-                </router-link>
+                <router-link :to="{ name: 'board' }" class="nav-link">여행후기</router-link>
               </li>
             </ul>
           </div>
@@ -35,11 +25,7 @@ import TheUserView from '@/components/views/TheUserView.vue';
           <!-- 로고 -->
           <div id="navb-logo" class="justify-content-center">
             <router-link to="/" class="navbar-brand">
-              <img
-                src="@/assets/img/logo.png"
-                style="width: 100px"
-                alt="logo image"
-              />
+              <img src="@/assets/img/logo.png" style="width: 100px" alt="logo image" />
             </router-link>
           </div>
           <the-user-view />
@@ -51,10 +37,9 @@ import TheUserView from '@/components/views/TheUserView.vue';
 
 <style scoped>
 body {
-  font-family: 'Pretendard Variable', Pretendard, -apple-system,
-    BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI',
-    'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji',
-    'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue',
+    'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', sans-serif;
   font-size: 18px;
   height: 800px;
 }
