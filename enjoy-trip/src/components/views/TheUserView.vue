@@ -5,14 +5,8 @@ const userInfo = ref(true);
 </script>
 
 <template>
-  <!-- 로그인 정보 -->
-  <div id="navb-login">
-    <c:set
-      var="userInfo"
-      value="${session.getAttribute.userInfo }"
-      scope="request"
-    ></c:set>
 
+<<<<<<< HEAD
     <!-- session에 userInfo 객체 없는 경우(로그인 X) -->
     <!-- session에 userInfo 객체 있는 경우(로그인 O) -->
     <!-- session 안쓰고 테스트 -->
@@ -40,6 +34,8 @@ const userInfo = ref(true);
       </ul>
     </template>
   </div>
+=======
+>>>>>>> 686e539de68067c15a2de72f8fd8b4456d593636
 </template>
 
 <style scoped></style>

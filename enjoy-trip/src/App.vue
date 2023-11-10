@@ -5,11 +5,16 @@ import TheFooter from '@/components/layout/TheFooter.vue';
 </script>
 
 <template>
+  <the-heading />
+  <the-navbar />
   <div>
-    <the-heading /><the-navbar />
     <router-view />
-    <the-footer />
   </div>
+  <the-footer />
 </template>
 
-<style scoped></style>
+<style scoped>
+div {
+  padding-top: 25px;
+}
+</style>

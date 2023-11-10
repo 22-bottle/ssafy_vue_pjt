@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -29,7 +32,8 @@ import edu.ssafy.spring.comment.model.service.CommentService;
 import edu.ssafy.spring.user.dto.UserDto;
 import edu.ssafy.spring.util.PageNavigation;
 
-@Controller
+@CrossOrigin(origins = { "*" }, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE} , maxAge = 6000)
+@RestController
 @RequestMapping("/board")
 public class BoardController {
 
@@ -55,13 +59,13 @@ public class BoardController {
 			result.put("key", map.get("key"));
 			result.put("word", map.get("word"));
 			response = new ResponseEntity<>(result, HttpStatus.OK);
+			return response;
 		} catch (Exception e) {
 			e.printStackTrace();
 			result.put("result", "조회 실패");
 			response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
 			return response;
 		} 
-		return response;
 	}
 
 	@GetMapping("/write")
@@ -110,26 +114,21 @@ public class BoardController {
 		return response;
 	}
 
-	@GetMapping("/modify")
-	public String modify(@RequestParam("articleno") int articleNo, @RequestParam Map<String, String> map, Model model,
-			HttpSession session) throws Exception {
+	@GetMapping("/modify/{articleNo}")
+	public ResponseEntity<Map<String, Object>> modify(@PathVariable int articleNo) {
+		ResponseEntity<Map<String, Object>> response = null;
+		Map<String, Object> map = new HashMap();
 		try {
-			UserDto userDto = (UserDto) session.getAttribute("userInfo");
-			if (userDto.getUserId() != null) {
-				BoardDto boardDto = boardService.getArticle(articleNo);
-				model.addAttribute("article", boardDto);
-				model.addAttribute("pgno", map.get("pgno"));
-				model.addAttribute("key", map.get("key"));
-				model.addAttribute("word", map.get("word"));
-				return "board/modify";
-			} else {
-				return "/user/login";
-			}
+			BoardDto boardDto = boardService.getArticle(articleNo);
+			map.put("article", boardDto);
+			response = new ResponseEntity<>(map, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			model.addAttribute("msg", "글을 가져오다가 문제가 발생했어요!😥");
-			return "/error/error";
+			map.put("result", "조회 실패");
+			response = new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+			return response;
 		}
+		return response;
 	}
 
 	@PutMapping("/modify")
@@ -150,7 +149,7 @@ public class BoardController {
 	}
 
 	@DeleteMapping("/delete/{articleNo}")
-	public ResponseEntity<Map<String, Object>> delete(@PathVariable int articleNo) throws Exception {
+	public ResponseEntity<Map<String, Object>> delete(@PathVariable int articleNo) {
 		ResponseEntity<Map<String, Object>> response = null;
 		Map<String, Object> map = new HashMap();
 		try {
