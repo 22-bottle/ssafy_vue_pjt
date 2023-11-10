@@ -21,6 +21,26 @@ const router = createRouter({
       name: 'board',
       component: TheBoardView,
     },
+    {
+      path: '/login',
+      name: 'login',
+      component: '',
+    },
+    {
+      path: '/logout',
+      name: 'logout',
+      component: '',
+    },
+    {
+      path: '/regist',
+      name: 'regist',
+      component: '',
+    },
+    {
+      path: '/mypage',
+      name: 'mypage',
+      component: '',
+    },
   ],
 });
 
