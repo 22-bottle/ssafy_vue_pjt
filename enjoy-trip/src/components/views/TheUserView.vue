@@ -1,13 +1,44 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, watchEffect } from 'vue';
+import { useRouter } from 'vue-router';
+import { store } from '@/util/store';
 
-const userInfo = ref(true);
+const userInfo = ref(false);
+const userId = ref('');
+const router = useRouter();
+
+onMounted(() => {
+  checkLoginStatus();
+});
+
+watchEffect(() => {
+  userInfo.value = store.isLoggedIn;
+  userId.value = store.userId;
+});
+
+function checkLoginStatus() {
+  const token = localStorage.getItem('userToken');
+  if (token) {
+    userInfo.value = true;
+    userId.value = token;
+  } else {
+    userInfo.value = false;
+  }
+}
+
+function logout() {
+  console.log("token invalidate");
+  localStorage.removeItem('userToken');
+  store.isLoggedIn = false;
+  store.userId = '';
+  router.push({ name: 'main' }).then(() => {
+    router.go();
+  });
+}
+
 </script>
 
 <template>
-  <!-- session에 userInfo 객체 없는 경우(로그인 X) -->
-  <!-- session에 userInfo 객체 있는 경우(로그인 O) -->
-  <!-- session 안쓰고 테스트 -->
   <template v-if="!userInfo">
     <ul class="navbar-nav">
       <li class="nav-item">
@@ -22,10 +53,10 @@ const userInfo = ref(true);
   <template v-else>
     <ul class="navbar-nav">
       <li class="nav-item">
-        <router-link :to="{ name: mypage, params: {} }" class="nav-link">${userInfo.userId }님 반가워요!</router-link>
+        <router-link :to="{ name: 'mypage', params: {} }" class="nav-link">{{ userId }}님 반가워요!</router-link>
       </li>
       <li class="nav-item">
-        <router-link to="/logout" class="nav-link">로그아웃</router-link>
+        <button @click="logout" class="nav-link">로그아웃</button>
       </li>
     </ul>
   </template>

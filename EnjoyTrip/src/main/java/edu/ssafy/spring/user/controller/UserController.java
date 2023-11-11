@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -25,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/user")
+@CrossOrigin
 @Slf4j
 public class UserController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -68,7 +71,7 @@ public class UserController extends HttpServlet {
     		return ResponseEntity.ok("include/joinsuccess");
     	} catch (Exception e) {
 			e.printStackTrace();
-			return ResponseEntity.ok("error/error");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("error/error");
 		}
         
     }

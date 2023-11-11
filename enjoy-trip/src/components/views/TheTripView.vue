@@ -1,5 +1,4 @@
 <script setup>
-import axios from 'axios';
 import { loadMap } from '@/assets/js/trip.js';
 import { onMounted, ref, computed } from 'vue';
 import { getSiGungu } from '@/api/trip';
@@ -16,8 +15,7 @@ const selectedGugunName = ref('');
 const selectedTypeName = ref('');
 const tripList = ref(null);
 let map = ref(null);
-let regcode = ref('');
-let area = ref('');
+let regcode = '';
 var markers = [];
 var mLength = 0;
 var loc = {
@@ -163,7 +161,7 @@ function selected(event, param) {
 
 function search() {
   console.log(selectedSido.value, selectedType.value);
-  let regcode = `detail ${selectedSido.value} ${selectedType.value}`;
+  regcode = `detail ${selectedSido.value} ${selectedType.value}`;
   sendRequest('detail', regcode, '');
   loadMap(
     selectedSidoName.value,

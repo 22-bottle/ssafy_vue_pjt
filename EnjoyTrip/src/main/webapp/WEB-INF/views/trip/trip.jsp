@@ -116,11 +116,10 @@
 	                } else {
 	                    // 여행지 상세정보를 처리하는 부분
 	                    let infoList = ``;
-	                    data.regcodes.forEach(function(item) {
+	                    data.forEach(function(item) {
 	                        let title = item.title;
-	                        let addr = item.addr;
-	                        let img = item.img;
-
+	                        let addr = item.addr1;
+	                        let img = item.firstImage;
 	                        infoList += `
 	                            <tr>
 	                                <td><img src="${img}" width="100px"></td>

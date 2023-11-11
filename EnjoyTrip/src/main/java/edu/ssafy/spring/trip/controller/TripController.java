@@ -6,6 +6,7 @@ import edu.ssafy.spring.trip.model.service.TripService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @RequestMapping("/trip")
+@CrossOrigin
 @Slf4j
 public class TripController {
 
@@ -30,6 +32,11 @@ public class TripController {
         this.service = service;
     }
 
+    @GetMapping("/trip")
+    public String tmp() {
+    	return "/trip/trip";
+    }
+    
     @GetMapping("/option")
     @RequestBody
     public ResponseEntity<?> option(@RequestParam(name = "action", required = false) String action,
@@ -40,7 +47,7 @@ public class TripController {
             String[] search = regcode.split(" ");
             AttractionInfoDto attractionInfoDto = new AttractionInfoDto();
             attractionInfoDto.setSidoCode(Integer.parseInt(search[1]));
-            attractionInfoDto.setContentTypeId(Integer.parseInt(search[search.length - 1]));
+            attractionInfoDto.setContentTypeId(Integer.parseInt(search[2]));
             List<AttractionInfoDto> list = service.attractionList(attractionInfoDto);
             return ResponseEntity.ok(list); // JSON으로 변환하여 반환합니다.
         } else {

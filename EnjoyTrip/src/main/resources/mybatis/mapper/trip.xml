@@ -4,15 +4,34 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="edu.ssafy.spring.trip.model.mapper.TripMapper">
+	<resultMap type="edu.ssafy.spring.trip.dto.AttractionInfoDto" id="infoDto">
+	    <result column="content_id" property="contentId"/>
+	    <result column="content_type_id" property="contentTypeId"/>
+	    <result column="title" property="title"/>
+	    <result column="addr1" property="addr1"/>
+	    <result column="addr2" property="addr2"/>
+	    <result column="zipcode" property="zipcode"/>
+	    <result column="tel" property="tel"/>
+	    <result column="first_image" property="firstImage"/>
+	    <result column="first_image2" property="firstImage2"/>
+	    <result column="readcount" property="readcount"/>
+	    <result column="sido_code" property="sidoCode"/>
+	    <result column="gugun_code" property="gugunCode"/>
+	    <result column="latitude" property="latitude"/>
+	    <result column="longitude" property="longitude"/>
+	    <result column="mlevel" property="mlevel"/>
+	</resultMap>
+	
 	<select id="attractionList"
-		resultType="edu.ssafy.spring.trip.dto.AttractionInfoDto">
+		parameterType="edu.ssafy.spring.trip.dto.AttractionInfoDto"
+		resultMap="infoDto">
 		SELECT * FROM attraction_info
 		<where>
-			<if test="attractionInfoDto.sidoCode != 0">
-				AND sido_code = #{attractionInfoDto.sidoCode}
+			<if test="sidoCode != 0">
+				AND sido_code = #{sidoCode}
 			</if>
-			<if test="attractionInfoDto.contentType != 0">
-				AND content_type_id = #{attractionInfoDto.contentType}
+			<if test="contentTypeId != 0">
+				AND content_type_id = #{contentTypeId}
 			</if>
 		</where>
 	</select>

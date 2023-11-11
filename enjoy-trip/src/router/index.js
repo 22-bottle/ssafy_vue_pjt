@@ -2,6 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router';
 import TheMainView from '@/components/views/TheMainView.vue';
 import TheTripView from '@/components/views/TheTripView.vue';
 // import TheBoardView from '@/components/views/TheBoardView.vue';
+import LogIn from '@/components/user/LogIn.vue';
+import Regist from '@/components/user/Regist.vue';
+import MyPage from '@/components/user/MyPage.vue';
 import TheErrorView from '@/views/TheErrorView.vue';
 
 const router = createRouter({
@@ -53,22 +56,22 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: '',
+      component: LogIn,
     },
     {
       path: '/logout',
       name: 'logout',
-      component: '',
+      component: () => import('@/components/user/LogOut.vue'),
     },
     {
       path: '/regist',
       name: 'regist',
-      component: '',
+      component: Regist,
     },
     {
       path: '/mypage',
       name: 'mypage',
-      component: '',
+      component: MyPage,
     },
   ],
 });
