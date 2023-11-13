@@ -3,11 +3,11 @@ import { serverAxios } from '@/util/http-commons';
 const server = serverAxios();
 
 function login(param) {
-  return server.post("/user/login",param);
+  return server.post('/user/login', param);
 }
 
 function modify(param) {
-  return server.patch("/user/update",param);
+  return server.patch('/user/update', param);
 }
 
 function discard(param) {
@@ -15,7 +15,11 @@ function discard(param) {
 }
 
 function regist(param) {
-  return server.post("/user/regist",param);
+  return server.post('/user/regist', param);
 }
 
-export { login, modify, discard, regist };
+function find(param) {
+  return server.post('/user/find', param);
+}
+
+export { login, modify, discard, regist, find };

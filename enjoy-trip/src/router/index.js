@@ -5,6 +5,7 @@ import TheTripView from '@/components/views/TheTripView.vue';
 import LogIn from '@/components/user/LogIn.vue';
 import Regist from '@/components/user/Regist.vue';
 import MyPage from '@/components/user/MyPage.vue';
+import Find from '@/components/user/Find.vue';
 import TheErrorView from '@/views/TheErrorView.vue';
 
 const router = createRouter({
@@ -72,6 +73,11 @@ const router = createRouter({
       path: '/mypage',
       name: 'mypage',
       component: MyPage,
+    },
+    {
+      path: '/find',
+      name: 'find',
+      component: Find,
     },
   ],
 });

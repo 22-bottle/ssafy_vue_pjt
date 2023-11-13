@@ -76,7 +76,16 @@ const selectedType = computed({
 });
 
 async function sendRequest(selid, regcode, area) {
-  let params = `regcode_pattern=${selid}&regcode=${regcode}&area=${area}`;
+  let rcode =
+    selid === 'detail'
+      ? selectedSidoCode.value +
+        ' ' +
+        selectedGugunCode.value +
+        ' ' +
+        selectedTypeCode.value
+      : regcode;
+
+  let params = `regcode_pattern=${selid}&regcode=${rcode}&area=${area}`;
 
   const response = await getSiGungu(params);
   if (selid !== 'detail') {
@@ -160,7 +169,6 @@ function selected(event, param) {
 }
 
 function search() {
-  console.log(selectedSido.value, selectedType.value);
   regcode = `detail ${selectedSido.value} ${selectedType.value}`;
   sendRequest('detail', regcode, '');
   loadMap(

@@ -46,7 +46,8 @@ public class TripController {
         if ("detail".equals(regcodePattern)) {
             String[] search = regcode.split(" ");
             AttractionInfoDto attractionInfoDto = new AttractionInfoDto();
-            attractionInfoDto.setSidoCode(Integer.parseInt(search[1]));
+            attractionInfoDto.setSidoCode(Integer.parseInt(search[0]));
+            attractionInfoDto.setGugunCode(Integer.parseInt(search[1]));
             attractionInfoDto.setContentTypeId(Integer.parseInt(search[2]));
             List<AttractionInfoDto> list = service.attractionList(attractionInfoDto);
             return ResponseEntity.ok(list); // JSON으로 변환하여 반환합니다.

@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public boolean findUser(UserDto userDto) {
+	public UserDto findUser(UserDto userDto) {
 		return userMapper.findUser(userDto);
 	}
 

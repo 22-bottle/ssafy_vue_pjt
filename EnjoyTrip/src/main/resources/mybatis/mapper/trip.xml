@@ -30,6 +30,9 @@
 			<if test="sidoCode != 0">
 				AND sido_code = #{sidoCode}
 			</if>
+			<if test="gugunCode != 0">
+				AND gugun_code = #{gugunCode}
+			</if>
 			<if test="contentTypeId != 0">
 				AND content_type_id = #{contentTypeId}
 			</if>
@@ -47,46 +50,18 @@
 	</select>
 
 
-<select id="searchArea" resultType="edu.ssafy.spring.trip.dto.AreaInfoDto">
-    <choose>
-        <when test="scope == 'gugun'">
-            SELECT gugun_code AS code, CONCAT(#{area}, ' ', gugun_name) AS name
-            FROM gugun
-            WHERE sido_code = #{regcode}
-        </when>
-        <otherwise>
-            SELECT sido_code AS code, CONCAT(#{area}, ' ', sido_name) AS name
-            FROM sido
-        </otherwise>
-    </choose>
-</select>
-
-
-<!--     <select id="searchArea" resultType="edu.ssafy.spring.trip.dto.AreaInfoDto">
-        SELECT 
-            CASE 
-                WHEN '${scope}' = 'gugun' THEN gugun_code 
-                ELSE sido_code 
-            END AS code,
-            CONCAT(#{area}, ' ', 
-                CASE 
-                    WHEN ${scope} = 'gugun' THEN gugun_name 
-                    ELSE sido_name 
-                END) AS name
-        FROM 
-            ${scope}
-        <if test="scope == 'gugun'">
-            WHERE sido_code = #{regcode}
-        </if>
-    </select> -->
-
-<!--     <select id="searchArea" resultType="edu.ssafy.spring.trip.dto.AreaInfoDto">
-        SELECT sido_code code , sido_name name
-        FROM 
-            ${scope}
-        <if test="scope == 'gugun'">
-            WHERE sido_code = #{regcode}
-        </if>
-    </select> -->
+	<select id="searchArea" resultType="edu.ssafy.spring.trip.dto.AreaInfoDto">
+	    <choose>
+	        <when test="scope == 'gugun'">
+	            SELECT gugun_code AS code, CONCAT(#{area}, ' ', gugun_name) AS name
+	            FROM gugun
+	            WHERE sido_code = #{regcode}
+	        </when>
+	        <otherwise>
+	            SELECT sido_code AS code, CONCAT(#{area}, ' ', sido_name) AS name
+	            FROM sido
+	        </otherwise>
+	    </choose>
+	</select>
     
 </mapper>

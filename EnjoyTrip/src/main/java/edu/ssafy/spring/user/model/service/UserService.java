@@ -6,7 +6,7 @@ public interface UserService {
 	
 	boolean loginUser(UserDto userDto);
 	int registUser(UserDto userDto);
-	boolean findUser(UserDto userDto);
+	UserDto findUser(UserDto userDto);
 	UserDto getUser(String userId);
 	String getSalt(String userId);
 	void updateUser(UserDto userDto);

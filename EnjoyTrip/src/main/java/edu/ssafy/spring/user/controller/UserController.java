@@ -123,13 +123,12 @@ public class UserController extends HttpServlet {
 		} else {
 			return  ResponseEntity.ok("include/loginfail");
 		}
-		
 	}
 	
     @PostMapping("/find")
     public ResponseEntity<?> find(@RequestBody UserDto userDto) {
-        boolean find = service.findUser(userDto);
-        return find ? ResponseEntity.ok("redirect:/include/findsuccess") : ResponseEntity.ok("redirect:/include/findfail");
+    	UserDto find = service.findUser(userDto);
+        return find != null ? ResponseEntity.ok(find) : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("error/error");
     }
 
 }

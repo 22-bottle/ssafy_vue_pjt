@@ -26,8 +26,8 @@
     </insert>
 
     <!-- findUser -->
-    <select id="findUser" parameterType="edu.ssafy.spring.user.dto.UserDto" resultType="boolean">
-        SELECT * FROM user WHERE userId = #{userId} AND user_name = #{userName}
+    <select id="findUser" parameterType="edu.ssafy.spring.user.dto.UserDto" resultMap="checkId">
+        SELECT * FROM user WHERE user_id = #{userId} AND user_name = #{userName}
     </select>
 
     <!-- getUser -->
