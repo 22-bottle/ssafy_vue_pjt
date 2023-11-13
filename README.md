@@ -57,7 +57,18 @@
 
 ### 댓글 조회, 작성, 삭제
 
-- ![image]()
+### 조회
+
+- ![image](https://github.com/22-bottle/ssafy_vue_pjt/assets/101461544/e3f028ed-bb81-411b-88b8-56c382407ed4)
+
+### 작성
+
+- ![image](https://github.com/22-bottle/ssafy_vue_pjt/assets/101461544/6351dd2b-f0d4-4ed8-9acc-91c002e8ddea)
+
+
+### 삭제
+
+- ![image](https://github.com/22-bottle/ssafy_vue_pjt/assets/101461544/41b1130e-2f55-4db0-a682-eaa8a44520fd)
 
 ---
 
