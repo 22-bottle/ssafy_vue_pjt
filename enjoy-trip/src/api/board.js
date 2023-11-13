@@ -28,4 +28,21 @@ function deleteArticle(articleno, success, fail) {
   server.delete(`${url}/delete/${articleno}`).then(success).catch(fail);
 }
 
-export { listArticle, detailArticle, registArticle, getModifyArticle, modifyArticle, deleteArticle };
+function writeComment(comment, success, fail) {
+  server.post(`${url}/commentAdd`, JSON.stringify(comment)).then(success).catch(fail);
+}
+
+function deleteComment(comment, success, fail) {
+  server.delete(`${url}/commentDelete/${comment.articleNo}/${comment.commentNo}`).then(success).catch(fail);
+}
+
+export {
+  listArticle,
+  detailArticle,
+  registArticle,
+  getModifyArticle,
+  modifyArticle,
+  deleteArticle,
+  writeComment,
+  deleteComment,
+};

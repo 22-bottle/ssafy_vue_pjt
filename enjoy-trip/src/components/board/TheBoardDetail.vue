@@ -3,11 +3,16 @@ import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { detailArticle, deleteArticle } from '@/api/board';
 
+import CommentWrite from './CommentWrite.vue';
+import CommentItem from './CommentItem.vue';
+
 const route = useRoute();
 const router = useRouter();
 
 const { articleno } = route.params;
 const article = ref({});
+const comments = ref([]);
+const loginUser = localStorage.getItem('userToken');
 
 onMounted(() => {
   getArticle();
@@ -17,6 +22,7 @@ const getArticle = () => {
     articleno,
     ({ data }) => {
       article.value = data.article;
+      comments.value = data.comments;
     },
     () => {
       router.push({ name: 'error' });
@@ -52,18 +58,16 @@ function onDeleteArticle() {
         <h2 class="text-primary">{{ article.article_no }}. {{ article.subject }}</h2>
       </div>
       <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
           <div class="clearfix align-content-center">
             <img
               class="avatar me-2 float-md-start bg-light p-2"
               src="https://raw.githubusercontent.com/twbs/icons/main/icons/person-fill.svg"
             />
-            <p>
-              <span class="fw-bold">{{ article.user_id }}</span> <br />
-              <span class="text-secondary fw-light">
-                {{ article.register_time }} | 조회 : {{ article.hit }} | 댓글 : {{ article.comment_cnt }}</span
-              >
-            </p>
+            <span class="fw-bold d-flex justify-content-start">{{ article.user_id }}</span> <br />
+            <span class="text-secondary fw-light d-flex justify-content-end">
+              {{ article.register_time }} | 조회 : {{ article.hit }} | 댓글 : {{ article.comment_cnt }}</span
+            >
           </div>
         </div>
         <div class="divider mb-3"></div>
@@ -79,6 +83,8 @@ function onDeleteArticle() {
           </button>
         </div>
       </div>
+      <comment-write :articleno="articleno" :userid="loginUser"></comment-write>
+      <comment-item v-for="(comment, index) in comments" :key="comment.commentNo" :comment="comment"></comment-item>
     </div>
   </div>
 </template>
